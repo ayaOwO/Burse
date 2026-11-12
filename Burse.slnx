@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="BL/BL.csproj" />
+  <Project Path="Common/Common.csproj" />
+  <Project Path="Presentation/Presentation.csproj" />
+</Solution>
