@@ -2,5 +2,5 @@
 
 public record Trade(int Id = 0)
 {
-    public List<int> OrderIds { get; init; } = [];
+    public List<Guid> OrderIds { get; init; } = [];
 }

@@ -1,12 +1,13 @@
 ﻿namespace Common;
-
 public record Order(
-    int Id,
-    OrderStatus Status,
+    Guid Id,
     OrderType Type,
     int Price,
+    int Amount,
     int OwnerId,
-    int StockId);
+    int StockId,
+    OrderStatus Status = OrderStatus.Open
+    );
 
 public enum OrderType
 {
