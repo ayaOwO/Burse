@@ -5,29 +5,33 @@ namespace DAL;
 
 public class MemoryMarketDataProvider : IMarketDataProvider
 {
+    private readonly object _stocksLock = new();
     private Dictionary<int, StockInfo> _stocks;
     private Dictionary<int, Trader> _traders;
-    private Dictionary<int, Order> _orders;
+    private Dictionary<Guid, Order> _orders;
     private Dictionary<int, Trade> _trades;
 
     public MemoryMarketDataProvider(IOptions<MarketDataProviderOptions> options)
     {
-        _stocks = new Dictionary<int, StockInfo>();
-        foreach (var stock in options.Value.Stocks)
-        {
-            _stocks[stock.Id] = stock;
-        }
 
         _traders = new Dictionary<int, Trader>();
         foreach (var trader in options.Value.Traders)
         {
-            _traders[trader.Id] = trader;
+            _traders[trader.Id] = trader with { InitialMoney = trader.Money };
         }
 
-        _orders = new Dictionary<int, Order>();
+        _orders = new Dictionary<Guid, Order>();
         foreach (var order in options.Value.Orders)
         {
             _orders[order.Id] = order;
+        }
+        _stocks = new Dictionary<int, StockInfo>();
+        foreach (var stock in options.Value.Stocks)
+        {
+            _stocks[stock.Id] = new StockInfo(stock);
+
+            var order = new Order(Guid.CreateVersion7(), OrderType.Ask, stock.CurrentPrice, stock.Amount, 0, stock.Id);
+            _orders.Add(order.Id, order);
         }
 
         _trades = new Dictionary<int, Trade>();
@@ -39,12 +43,26 @@ public class MemoryMarketDataProvider : IMarketDataProvider
 
     public IList<StockInfo> GetAllStocks()
     {
-        return [.. _stocks.Values];
+        lock (_stocksLock)
+        {
+            return _stocks.Values.Select(stock => new StockInfo(stock)).ToList();
+        }
     }
 
     public StockInfo GetStocks(int id)
     {
-        return _stocks[id];
+        lock (_stocksLock)
+        {
+            return new StockInfo(_stocks[id]);
+        }
+    }
+
+    public void UpdateStock(StockInfo stock)
+    {
+        lock (_stocksLock)
+        {
+            _stocks[stock.Id] = new StockInfo(stock);
+        }
     }
 
     public IList<Order> GetOrdersByStockId(int stockId)

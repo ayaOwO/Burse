@@ -6,6 +6,7 @@ public interface IMarketDataProvider
 {
     public IList<StockInfo> GetAllStocks();
     public StockInfo GetStocks(int id);
+    public void UpdateStock(StockInfo stock);
     public IList<Order> GetOrdersByStockId(int stockId);
     public IList<Trade> GetTradesByStockId(int stockId);
     public IList<Trade> GetTradesByTraderId(int traderId);
