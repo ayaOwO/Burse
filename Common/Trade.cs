@@ -1,7 +1,6 @@
 ﻿namespace Common;
 
-public record Trade
+public record Trade(int Id = 0)
 {
-    public int Id { get; init; }
     public List<int> OrderIds { get; init; } = [];
 }

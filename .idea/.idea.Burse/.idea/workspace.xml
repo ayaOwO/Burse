@@ -4,8 +4,29 @@
     <projectFile profileName="http">Presentation/Presentation.csproj</projectFile>
     <projectFile profileName="https">Presentation/Presentation.csproj</projectFile>
   </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakeProjectFlavorService">
+    <option name="flavorId" value="CMakePlainProjectFlavor" />
+  </component>
+  <component name="CMakeSettings">
+    <configurations />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="13e91912-3bd6-4b3a-8ee7-74e4d3fb653a" name="Changes" comment="" />
+    <list default="true" id="13e91912-3bd6-4b3a-8ee7-74e4d3fb653a" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Common/Share.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Presentation/Controllers/StocksController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Burse/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Burse/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL/BL.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/BL/BL.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Burse.slnx" beforeDir="false" afterPath="$PROJECT_DIR$/Burse.slnx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BurseJson.json" beforeDir="false" afterPath="$PROJECT_DIR$/Presentation/BurseJson.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Common/Order.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Common/Order.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Common/Trade.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Common/Trade.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Common/Trader.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Common/Trader.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Presentation/Presentation.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Presentation/Presentation.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Presentation/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Presentation/Program.cs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -17,10 +38,76 @@
       <option value="repository" />
     </option>
   </component>
+  <component name="DpaMonitoringSettings">
+    <option name="firstShow" value="false" />
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Common/Share.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Presentation/Controllers/stocks.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0" />
+      <entry key="S2" value="1.0" />
+      <entry key="S5" value="1.0" />
+      <entry key="S10" value="1.0000000003534963" />
+      <entry key="S30" value="1.0030447018151833" />
+      <entry key="S60" value="1.165658627721639" />
+      <entry key="M2" value="2.291540573657692" />
+      <entry key="M5" value="8.371825067950617" />
+      <entry key="M10" value="23.68844405554729" />
+      <entry key="M15" value="40.51489394043609" />
+      <entry key="M30" value="82.30746467353087" />
+      <entry key="H1" value="127.49563314214431" />
+      <entry key="H2" value="162.36675662308377" />
+      <entry key="H4" value="184.29853942959963" />
+      <entry key="D1" value="205.42543754240364" />
+      <entry key="W1" value="209.33894804000386" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="1.0562280960992609E-15" />
+      <entry key="MS500" value="0.0010110009021888449" />
+      <entry key="S2" value="0.1783150032336285" />
+      <entry key="S5" value="0.5017358742547514" />
+      <entry key="S10" value="0.7083331661880852" />
+      <entry key="S30" value="0.8917756192221988" />
+      <entry key="S60" value="0.9632796814774415" />
+      <entry key="M2" value="1.145049070130871" />
+      <entry key="M5" value="2.9464671860075127" />
+      <entry key="M10" value="7.995957588387484" />
+      <entry key="M15" value="12.94951449781572" />
+      <entry key="M30" value="23.870601731783935" />
+      <entry key="H1" value="34.638028335797365" />
+      <entry key="H2" value="42.55145443804371" />
+      <entry key="H4" value="47.40625045767115" />
+      <entry key="D1" value="52.011154672260155" />
+      <entry key="W1" value="52.857277124094885" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.15389305166811454" />
+      <entry key="MS500" value="0.6879582560054188" />
+      <entry key="S2" value="1.027663310644863" />
+      <entry key="S5" value="1.387163107077108" />
+      <entry key="S10" value="1.6325360282537114" />
+      <entry key="S30" value="1.8638917871029004" />
+      <entry key="S60" value="2.112292473739134" />
+      <entry key="M2" value="3.4263601908142864" />
+      <entry key="M5" value="11.304176876982078" />
+      <entry key="M10" value="31.66280729418693" />
+      <entry key="M15" value="53.440448602458424" />
+      <entry key="M30" value="106.15543717576563" />
+      <entry key="H1" value="162.11701286236857" />
+      <entry key="H2" value="204.90790162342955" />
+      <entry key="H4" value="231.69902148632897" />
+      <entry key="D1" value="257.43553328312703" />
+      <entry key="W1" value="262.19607132059485" />
+    </decayedShown>
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6,
   &quot;fromUser&quot;: false
@@ -32,14 +119,20 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;.NET Launch Settings Profile.Presentation: http.executor&quot;: &quot;Run&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;last_opened_file_path&quot;: &quot;/home/ayak/Documents/repos/Burse&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
   }
 }</component>
@@ -92,8 +185,23 @@
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="chore: project init" />
+    <MESSAGE value="chore(common): added base models" />
+    <MESSAGE value="chore(swagger): added swagger" />
+    <option name="LAST_COMMIT_MESSAGE" value="chore(swagger): added swagger" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
