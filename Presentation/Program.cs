@@ -5,6 +5,7 @@ using BL.StockUpdaters;
 using DAL;
 using DAL.Options;
 using Serilog;
+using Scalar.AspNetCore;
 using Presentation.Services;
 using System.Text.Json.Serialization;
 
@@ -42,6 +43,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();
