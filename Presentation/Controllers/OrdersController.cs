@@ -6,19 +6,19 @@ namespace Presentation.Controllers;
 
 [ApiController]
 [Route("orders")]
-public class OrdersController(OrderService orders) : ControllerBase
+public class OrdersController(OrderBookingService ordersBooking) : ControllerBase
 {
     [HttpPost]
     public IActionResult CreateOrder(CreateOrderRequest request)
     {
-        var order = orders.CreateOrder(request.TraderId, request.Type, request.StockId, request.Price, request.Amount);
+        var order = ordersBooking.CreateOrder(request.TraderId, request.Type, request.StockId, request.Price, request.Amount);
         return Ok(new { order.Id });
     }
 
     [HttpDelete("{id:guid}")]
     public IActionResult CancelOrder(Guid id)
     {
-        orders.CancelOrder(id);
+        ordersBooking.CancelOrder(id);
         return NoContent();
     }
 }

@@ -6,6 +6,7 @@ using DAL;
 using DAL.Options;
 using Serilog;
 using Scalar.AspNetCore;
+using Presentation.ExceptionHandlers;
 using Presentation.Services;
 using System.Text.Json.Serialization;
 
@@ -19,7 +20,8 @@ builder.Host.UseSerilog((context, configuration) => configuration
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddControllers(options => options.Filters.Add<ApiExceptionFilter>())
+builder.Services.AddExceptionHandler<ApiExceptionHandler>();
+builder.Services.AddProblemDetails();
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddSwaggerGen();
@@ -27,7 +29,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<MarketDataProviderOptions>(builder.Configuration);
 builder.Services.AddSingleton<IMarketDataProvider, MemoryMarketDataProvider>();
 builder.Services.AddScoped<StockService>();
-builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<OrderBookingService>();
 builder.Services.AddScoped<TraderService>();
 
 builder.Services.Configure<RandomStockUpdaterOptions>(builder.Configuration.GetSection(nameof(RandomStockUpdaterOptions)));
@@ -36,6 +38,7 @@ builder.Services.AddSingleton<IStockUpdater, RandomStockUpdater>();
 builder.Services.Configure<StockUpdaterServiceOptions>(builder.Configuration.GetSection(nameof(StockUpdaterServiceOptions)));
 builder.Services.AddHostedService<StockUpdaterService>();
 var app = builder.Build();
+app.UseExceptionHandler();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
