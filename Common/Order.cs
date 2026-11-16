@@ -2,7 +2,7 @@
 public record Order(
     Guid Id,
     OrderType Type,
-    int Price,
+    double Price,
     int Amount,
     int OwnerId,
     int StockId,
