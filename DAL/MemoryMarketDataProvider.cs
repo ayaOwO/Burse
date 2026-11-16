@@ -7,16 +7,15 @@ namespace DAL;
 
 public class MemoryMarketDataProvider : IMarketDataProvider
 {
-    private readonly object _stocksLock = new();
+    private readonly Lock _stocksLock = new();
     private readonly Lock _ordersLock = new();
-    private Dictionary<int, StockInfo> _stocks;
-    private Dictionary<int, Trader> _traders;
-    private Dictionary<Guid, Order> _orders;
-    private Dictionary<int, Trade> _trades;
+    private readonly Dictionary<int, StockInfo> _stocks;
+    private readonly Dictionary<int, Trader> _traders;
+    private readonly Dictionary<Guid, Order> _activeOrders;
+    private readonly Dictionary<int, Trade> _trades;
 
     public MemoryMarketDataProvider(IOptions<MarketDataProviderOptions> options)
     {
-
         _traders = new Dictionary<int, Trader>();
         foreach (var trader in options.Value.Traders)
         {
@@ -27,18 +26,27 @@ public class MemoryMarketDataProvider : IMarketDataProvider
             };
         }
 
-        _orders = new Dictionary<Guid, Order>();
+        _activeOrders = new Dictionary<Guid, Order>();
         foreach (var order in options.Value.Orders)
         {
-            _orders[order.Id] = order;
+            _activeOrders[order.Id] = order;
         }
+
         _stocks = new Dictionary<int, StockInfo>();
         foreach (var stock in options.Value.Stocks)
         {
             _stocks[stock.Id] = new StockInfo(stock);
 
-            var order = new Order(Guid.CreateVersion7(), OrderType.Ask, stock.CurrentPrice, stock.Amount, 0, stock.Id);
-            _orders.Add(order.Id, order);
+            var order = new Order
+            {
+                Id = Guid.CreateVersion7(),
+                Type = OrderType.Ask,
+                Price = stock.CurrentPrice,
+                Amount = stock.Amount,
+                OwnerId = 0,
+                StockId = stock.Id
+            };
+            _activeOrders.Add(order.Id, order);
         }
 
         _trades = new Dictionary<int, Trade>();
@@ -76,7 +84,15 @@ public class MemoryMarketDataProvider : IMarketDataProvider
     {
         lock (_ordersLock)
         {
-            return _orders.Values.Where(order => order.StockId == stockId).ToList();
+            return _activeOrders.Values.Where(order => order.StockId == stockId).ToList();
+        }
+    }
+
+    public IList<Order> GetOrdersByType(OrderType type)
+    {
+        lock (_ordersLock)
+        {
+            return _activeOrders.Values.Where(order => order.Type == type).ToList();
         }
     }
 
@@ -84,7 +100,7 @@ public class MemoryMarketDataProvider : IMarketDataProvider
     {
         lock (_ordersLock)
         {
-            return _orders.Values.Where(order => order.OwnerId == traderId).ToList();
+            return _activeOrders.Values.Where(order => order.OwnerId == traderId).ToList();
         }
     }
 
@@ -92,7 +108,7 @@ public class MemoryMarketDataProvider : IMarketDataProvider
     {
         lock (_ordersLock)
         {
-            _orders.Add(order.Id, order);
+            _activeOrders.Add(order.Id, order);
         }
     }
 
@@ -100,13 +116,13 @@ public class MemoryMarketDataProvider : IMarketDataProvider
     {
         lock (_ordersLock)
         {
-            var order = _orders[id];
+            var order = _activeOrders[id];
             if (order.Status == OrderStatus.Filled)
             {
-                throw new InvalidOperationException("A filled order cannot be cancelled.");
+                _activeOrders.Remove(id);
             }
 
-            _orders[id] = order with { Status = OrderStatus.Cancelled };
+            order.Status = OrderStatus.Cancelled;
         }
     }
 
@@ -115,7 +131,7 @@ public class MemoryMarketDataProvider : IMarketDataProvider
         lock (_ordersLock)
         {
             return _trades.Values.Where(trade => trade.OrderIds.Any(orderId =>
-                _orders.TryGetValue(orderId, out var order) && order.StockId == stockId)).ToList();
+                _activeOrders.TryGetValue(orderId, out var order) && order.StockId == stockId)).ToList();
         }
     }
 
@@ -124,7 +140,7 @@ public class MemoryMarketDataProvider : IMarketDataProvider
         lock (_ordersLock)
         {
             return _trades.Values.Where(trade => trade.OrderIds.Any(orderId =>
-                _orders.TryGetValue(orderId, out var order) && order.OwnerId == traderId)).ToList();
+                _activeOrders.TryGetValue(orderId, out var order) && order.OwnerId == traderId)).ToList();
         }
     }
 

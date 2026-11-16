@@ -9,6 +9,7 @@ public interface IMarketDataProvider
     public StockInfo GetStocks(int id);
     public void UpdateStock(StockInfo stock);
     public IList<Order> GetOrdersByStockId(int stockId);
+    public IList<Order> GetOrdersByType(OrderType type);
     public IList<Order> GetOrdersByTraderId(int traderId);
     public void AddOrder(Order order);
     public void CancelOrder(Guid id);
