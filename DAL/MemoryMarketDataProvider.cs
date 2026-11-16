@@ -7,6 +7,7 @@ namespace DAL;
 public class MemoryMarketDataProvider : IMarketDataProvider
 {
     private readonly object _stocksLock = new();
+    private readonly Lock _ordersLock = new();
     private Dictionary<int, StockInfo> _stocks;
     private Dictionary<int, Trader> _traders;
     private Dictionary<Guid, Order> _orders;
@@ -18,7 +19,11 @@ public class MemoryMarketDataProvider : IMarketDataProvider
         _traders = new Dictionary<int, Trader>();
         foreach (var trader in options.Value.Traders)
         {
-            _traders[trader.Id] = trader with { InitialMoney = trader.Money };
+            _traders[trader.Id] = trader with
+            {
+                InitialMoney = trader.Money,
+                StocksOwned = new Dictionary<int, int>(trader.StocksOwned)
+            };
         }
 
         _orders = new Dictionary<Guid, Order>();
@@ -68,43 +73,71 @@ public class MemoryMarketDataProvider : IMarketDataProvider
 
     public IList<Order> GetOrdersByStockId(int stockId)
     {
-        return _orders.Values.Where(order => order.StockId == stockId).ToList();
+        lock (_ordersLock)
+        {
+            return _orders.Values.Where(order => order.StockId == stockId).ToList();
+        }
     }
 
     public IList<Order> GetOrdersByTraderId(int traderId)
     {
-        throw new NotImplementedException();
+        lock (_ordersLock)
+        {
+            return _orders.Values.Where(order => order.OwnerId == traderId).ToList();
+        }
     }
 
     public void AddOrder(Order order)
     {
-        throw new NotImplementedException();
+        lock (_ordersLock)
+        {
+            _orders.Add(order.Id, order);
+        }
     }
 
     public void CancelOrder(Guid id)
     {
-        throw new NotImplementedException();
+        lock (_ordersLock)
+        {
+            var order = _orders[id];
+            if (order.Status == OrderStatus.Filled)
+            {
+                throw new InvalidOperationException("A filled order cannot be cancelled.");
+            }
+
+            _orders[id] = order with { Status = OrderStatus.Cancelled };
+        }
     }
 
     public IList<Trade> GetTradesByStockId(int stockId)
     {
-        return _trades.Values.Where(trade => trade.OrderIds.Any(orderId =>
-            _orders.TryGetValue(orderId, out var order) && order.StockId == stockId)).ToList();
+        lock (_ordersLock)
+        {
+            return _trades.Values.Where(trade => trade.OrderIds.Any(orderId =>
+                _orders.TryGetValue(orderId, out var order) && order.StockId == stockId)).ToList();
+        }
     }
 
     public IList<Trade> GetTradesByTraderId(int traderId)
     {
-        return _trades.Values.Where(trade => trade.OrderIds.Any(orderId =>
-            _orders.TryGetValue(orderId, out var order) && order.OwnerId == traderId)).ToList();
+        lock (_ordersLock)
+        {
+            return _trades.Values.Where(trade => trade.OrderIds.Any(orderId =>
+                _orders.TryGetValue(orderId, out var order) && order.OwnerId == traderId)).ToList();
+        }
     }
 
     public Trader GetTraderById(int id)
     {
-        return _traders[id];
+        var trader = _traders[id];
+        return trader with { StocksOwned = new Dictionary<int, int>(trader.StocksOwned) };
     }
 
     public IList<Trader> GetAllTraders()
     {
-        return _traders.Values.ToList();
+        return _traders.Values.Select(trader => trader with
+        {
+            StocksOwned = new Dictionary<int, int>(trader.StocksOwned)
+        }).ToList();
     }
 }
