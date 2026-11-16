@@ -2,11 +2,9 @@ using BL.Abstractions;
 using BL.Options;
 using Common;
 using DAL;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace BL.Services;
+namespace Presentation.Services;
 
 public sealed class StockUpdaterService : BackgroundService
 {
@@ -46,7 +44,7 @@ public sealed class StockUpdaterService : BackgroundService
         }
         catch (OperationCanceledException e)
         {
-            _logger.LogError(e, "Operation was cancelled, not all stock prices updated");
+            _logger.LogError(e, "Operation Cancellation requested, not all stock prices updated");
         }
     }
 }
