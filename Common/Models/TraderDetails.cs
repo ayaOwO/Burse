@@ -1,6 +1,8 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Common.Models;
 
-public sealed record TraderSummary(int Id, string Name, double Money);
+public sealed record TraderSummary([Range(0, int.MaxValue)] int Id, string Name, double Money);
 
 public sealed record TraderDetails(IList<Order> Orders, IDictionary<int, int> StocksOwned, double Money);
 

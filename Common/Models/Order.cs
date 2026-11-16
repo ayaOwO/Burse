@@ -1,11 +1,13 @@
-﻿namespace Common;
+using System.ComponentModel.DataAnnotations;
+
+namespace Common;
 public record Order(
     Guid Id,
     OrderType Type,
     double Price,
     int Amount,
     int OwnerId,
-    int StockId,
+    [Range(1, int.MaxValue)] int StockId,
     OrderStatus Status = OrderStatus.Open
     );
 

@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Common;
 
 public sealed class StockInfo
@@ -12,6 +14,7 @@ public sealed class StockInfo
         Amount = stock.Amount;
     }
 
+    [Range(1, int.MaxValue)]
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public double CurrentPrice { get; set; }
