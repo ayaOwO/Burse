@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Common;
+namespace Common.Models;
 
 public record Trader([Range(0, int.MaxValue)] int Id, string Name, double Money, double InitialMoney = 0)
 {

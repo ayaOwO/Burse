@@ -1,6 +1,7 @@
 using Common;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using Common.Models;
 
 namespace Common.Requests;
 

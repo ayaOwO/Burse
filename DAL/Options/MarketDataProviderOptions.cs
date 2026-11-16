@@ -1,4 +1,5 @@
 using Common;
+using Common.Models;
 using Microsoft.Extensions.Configuration;
 
 namespace DAL.Options;

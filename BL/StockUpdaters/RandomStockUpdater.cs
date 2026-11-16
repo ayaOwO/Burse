@@ -1,6 +1,7 @@
 using BL.Abstractions;
 using BL.Options;
 using Common;
+using Common.Models;
 using Microsoft.Extensions.Options;
 
 namespace BL.StockUpdaters;

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Common;
+namespace Common.Models;
 public record Order(
     Guid Id,
     OrderType Type,

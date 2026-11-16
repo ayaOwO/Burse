@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Models;
 
 namespace DAL;
 

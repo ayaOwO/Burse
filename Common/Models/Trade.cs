@@ -1,4 +1,4 @@
-﻿namespace Common;
+﻿namespace Common.Models;
 
 public record Trade(int Id = 0)
 {
