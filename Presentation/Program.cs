@@ -1,12 +1,10 @@
 using BL.Abstractions;
 using BL.Options;
-using BL.OrderBookMatchers;
 using BL.Services;
 using BL.StockUpdaters;
 using DAL;
 using DAL.Options;
 using Serilog;
-using Presentation.Filters;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);

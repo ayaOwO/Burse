@@ -1,4 +1,5 @@
 ﻿using Common;
+using DAL.Options;
 using Microsoft.Extensions.Options;
 
 namespace DAL;
@@ -68,6 +69,21 @@ public class MemoryMarketDataProvider : IMarketDataProvider
     public IList<Order> GetOrdersByStockId(int stockId)
     {
         return _orders.Values.Where(order => order.StockId == stockId).ToList();
+    }
+
+    public IList<Order> GetOrdersByTraderId(int traderId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void AddOrder(Order order)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void CancelOrder(Guid id)
+    {
+        throw new NotImplementedException();
     }
 
     public IList<Trade> GetTradesByStockId(int stockId)
