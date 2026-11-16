@@ -1,5 +1,4 @@
-﻿using Common;
-using Common.Models;
+﻿using Common.Models;
 using DAL.Options;
 using Microsoft.Extensions.Options;
 
@@ -108,7 +107,10 @@ public class MemoryMarketDataProvider : IMarketDataProvider
     {
         lock (_ordersLock)
         {
-            _activeOrders.Add(order.Id, order);
+            if (order.Status != OrderStatus.Filled)
+            {
+                _activeOrders.Add(order.Id, order);
+            }
         }
     }
 
