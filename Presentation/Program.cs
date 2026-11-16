@@ -5,6 +5,7 @@ using BL.StockUpdaters;
 using DAL;
 using DAL.Options;
 using Serilog;
+using Presentation.Services;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,11 +19,15 @@ builder.Host.UseSerilog((context, configuration) => configuration
 builder.Services.AddOpenApi();
 
 builder.Services.AddControllers(options => options.Filters.Add<ApiExceptionFilter>())
+builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<MarketDataProviderOptions>(builder.Configuration);
 builder.Services.AddSingleton<IMarketDataProvider, MemoryMarketDataProvider>();
+builder.Services.AddScoped<StockService>();
+builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<TraderService>();
 
 builder.Services.Configure<RandomStockUpdaterOptions>(builder.Configuration.GetSection(nameof(RandomStockUpdaterOptions)));
 builder.Services.AddSingleton<IStockUpdater, RandomStockUpdater>();
