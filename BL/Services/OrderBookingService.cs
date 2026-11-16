@@ -6,42 +6,42 @@ namespace BL.Services;
 
 public class OrderBookingService(IMarketDataProvider provider)
 {
-    public Trade MatchOrder(Guid traderId, Guid stockId, Order newOrder)
+    public Order MatchOrder(Guid traderId, Guid stockId, Order newOrder)
     {
-        // go through all opposite orders 
-        // 
-        //type = bid
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(newOrder.Amount);
         var matchingType = newOrder.Type == OrderType.Bid ? OrderType.Ask : OrderType.Bid;
         var orders = provider.GetOrdersByType(matchingType);
         var possibleOrders = orders
             .Where(order =>
                 order.StockId == newOrder.StockId
-                && order.Amount <= newOrder.Amount
-                && order.Price <= newOrder.Price)
-            .OrderBy(order => order.Price)
-            .ThenBy(order => order.Amount).ToList();
-
-
-        foreach (var order in possibleOrders)
+                && order is { Status: OrderStatus.Open, Amount: > 0 }
+                && (newOrder.Type == OrderType.Bid
+                    ? order.Price <= newOrder.Price
+                    : order.Price >= newOrder.Price));
+        var prioritizedOrders = newOrder.Type == OrderType.Bid
+            ? possibleOrders.OrderBy(order => order.Price)
+            : possibleOrders.OrderByDescending(order => order.Price);
+        var matched = new List<Order>();
+        foreach (var order in prioritizedOrders.ThenBy(order => order.Id))
         {
-            if (newOrder.Amount > order.Amount)
+            var traded = Math.Min(newOrder.Amount, order.Amount);
+            order.Amount -= traded;
+            newOrder.Amount -= traded;
+            if (order.Amount == 0)
             {
-                var traded = int.Min(newOrder.Amount, order.Amount);
-                newOrder.Amount -= traded;
-                order.Amount = newOrder.Amount;
-                if (order.Amount > 0)
-                {
-                    break;
-                }
-
-                provider.CancelOrder(order.Id);
+                order.Status = OrderStatus.Filled;
             }
 
-            if (newOrder.Amount > 0)
+            matched.Add(order);
+            if (newOrder.Amount == 0)
             {
-                provider.AddOrder(newOrder);
+                break;
             }
         }
+
+        if (newOrder.Amount == 0)
+            newOrder.Status = OrderStatus.Filled;
+        return newOrder;
     }
 
     public Order CreateOrder(int traderId, OrderType type, int stockId, double price, int amount)
@@ -54,7 +54,11 @@ public class OrderBookingService(IMarketDataProvider provider)
         var trader = provider.GetTraderById(traderId);
         // Check if the stock exists
         provider.GetStocks(stockId);
-        var order = new Order(Guid.CreateVersion7(), type, price, amount, traderId, stockId);
+        var order = new Order
+        {
+            Id = Guid.CreateVersion7(), Type = type, Price = price, Amount = amount,
+            OwnerId = traderId, StockId = stockId
+        };
         switch (type)
         {
             case OrderType.Ask when !trader.StocksOwned.TryGetValue(stockId, out var owned) || owned < amount:
