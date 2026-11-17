@@ -4,5 +4,5 @@ namespace BL.Abstractions;
 
 public interface IStockUpdater
 {
-    public double CalculatePrice(StockInfo stock);
+    public double CalculatePrice(Stock stock);
 }

@@ -34,7 +34,7 @@ public sealed class StockUpdaterService : BackgroundService
                 {
                     stoppingToken.ThrowIfCancellationRequested();
 
-                    var newPrice = _stockUpdater.CalculatePrice(new StockInfo(stock));
+                    var newPrice = _stockUpdater.CalculatePrice(new Stock(stock));
                     _logger.LogInformation("Stock {StockName} price changed from {OldPrice} to {StockCurrentPrice}",
                         stock.Name, stock.CurrentPrice, newPrice);
                     stock.CurrentPrice = newPrice;

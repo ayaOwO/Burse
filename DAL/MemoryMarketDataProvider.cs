@@ -11,7 +11,8 @@ public class MemoryMarketDataProvider : IMarketDataProvider
     private readonly Lock _ordersLock = new();
     private readonly Lock _tradersLock = new();
     private readonly ILogger<MemoryMarketDataProvider> _logger;
-    private readonly Dictionary<int, StockInfo> _stocks;
+
+    private readonly Dictionary<int, Stock> _stocks;
     private readonly Dictionary<int, Trader> _traders;
     private readonly Dictionary<Guid, Order> _activeOrders;
     private readonly Dictionary<int, Trade> _trades;
@@ -36,10 +37,10 @@ public class MemoryMarketDataProvider : IMarketDataProvider
             _activeOrders[order.Id] = order;
         }
 
-        _stocks = new Dictionary<int, StockInfo>();
+        _stocks = new Dictionary<int, Stock>();
         foreach (var stock in options.Value.Stocks)
         {
-            _stocks[stock.Id] = new StockInfo(stock);
+            _stocks[stock.Id] = new Stock(stock);
             _traders[0].StocksOwned[stock.Id] = stock.Amount;
 
             var order = new Order
@@ -70,27 +71,27 @@ public class MemoryMarketDataProvider : IMarketDataProvider
         }
     }
 
-    public IList<StockInfo> GetAllStocks()
+    public IList<Stock> GetAllStocks()
     {
         lock (_stocksLock)
         {
-            return _stocks.Values.Select(stock => new StockInfo(stock)).ToList();
+            return _stocks.Values.Select(stock => new Stock(stock)).ToList();
         }
     }
 
-    public StockInfo GetStocks(int stockId)
+    public Stock GetStocks(int stockId)
     {
         lock (_stocksLock)
         {
-            return new StockInfo(_stocks[stockId]);
+            return new Stock(_stocks[stockId]);
         }
     }
 
-    public void UpdateStock(StockInfo stock)
+    public void UpdateStock(Stock stock)
     {
         lock (_stocksLock)
         {
-            _stocks[stock.Id] = new StockInfo(stock);
+            _stocks[stock.Id] = new Stock(stock);
         }
     }
 

@@ -2,11 +2,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Common.Models;
 
-public sealed class StockInfo
+public sealed class Stock
 {
-    public StockInfo() { }
+    public Stock() { }
 
-    public StockInfo(StockInfo stock)
+    public Stock(Stock stock)
     {
         Id = stock.Id;
         Name = stock.Name;

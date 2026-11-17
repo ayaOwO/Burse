@@ -9,14 +9,14 @@ namespace Presentation.Controllers;
 public class StocksController(StockService stocks) : ControllerBase
 {
     [HttpGet]
-    public ActionResult<IList<StockInfo>> GetStocks()
+    public ActionResult<IList<Stock>> GetStocks()
     {
-        return Ok(stocks.GetStocks());
+        return Ok(stocks.ListStocks());
     }
 
     [HttpGet("{id:int}")]
-    public ActionResult<StockDetails> GetStock(int id)
+    public ActionResult<StockSummary> GetStock(int id)
     {
-        return Ok(stocks.GetStock(id));
+        return Ok(stocks.GetStockSummary(id));
     }
 }
