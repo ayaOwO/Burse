@@ -1,17 +1,22 @@
-using BL.Services;
+using BL.Abstractions;
 using Common.Requests;
+using Common.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
 
 [ApiController]
 [Route("orders")]
-public class OrdersController(OrderBookingService ordersBooking) : ControllerBase
+public class OrdersController(IOrderBookingService ordersBooking) : ControllerBase
 {
     [HttpPost]
     public IActionResult CreateOrder(CreateOrderRequest request)
     {
-        var order = ordersBooking.CreateOrder(request.TraderId, request.Type, request.StockId, request.Price, request.Amount);
+        var order = ordersBooking.CreateOrder(new Order
+        {
+            TraderId = request.TraderId, Type = request.Type, StockId = request.StockId,
+            Price = request.Price, Amount = request.Amount
+        });
         return Ok(new { order.Id });
     }
 

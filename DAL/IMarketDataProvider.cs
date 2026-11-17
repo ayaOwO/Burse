@@ -4,14 +4,13 @@ namespace DAL;
 
 public interface IMarketDataProvider
 {
-    public IList<StockInfo> GetAllStocks();
-    public StockInfo GetStocks(int stockId);
-    public void UpdateStock(StockInfo stock);
+    public IList<Stock> GetAllStocks();
+    public Stock GetStocks(int stockId);
+    public void UpdateStockPrice(int stockId, double price);
     public IList<Order> GetOrdersByStockId(int stockId);
     public IList<Order> GetOrdersByType(OrderType type);
     public IList<Order> GetOrdersByTraderId(int traderId);
-    public IList<Order> GetMatchingOrders(Order order);
-    public long GetListedStockCount(int traderId, int stockId);
+    public long GetStockCountOfOpenOrdersByTraders(int traderId, int stockId);
     public double GetCommittedMoney(int traderId);
     public void AddOrder(Order order);
     public void AddTrade(Trade trade);

@@ -31,6 +31,7 @@ builder.Services.AddSingleton<IMarketDataProvider, MemoryMarketDataProvider>();
 builder.Services.AddScoped<StockService>();
 builder.Services.AddScoped<OrderBookingService>();
 builder.Services.AddScoped<TraderService>();
+builder.Services.AddScoped<IOrderBookingService, OrderBookingService>();
 
 builder.Services.Configure<RandomStockUpdaterOptions>(builder.Configuration.GetSection(nameof(RandomStockUpdaterOptions)));
 builder.Services.AddSingleton<IStockUpdater, RandomStockUpdater>();

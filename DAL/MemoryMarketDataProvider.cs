@@ -10,6 +10,7 @@ public class MemoryMarketDataProvider : IMarketDataProvider
     private readonly Lock _stocksLock = new();
     private readonly Lock _ordersLock = new();
     private readonly Lock _tradersLock = new();
+
     private readonly ILogger<MemoryMarketDataProvider> _logger;
 
     private readonly Dictionary<int, Stock> _stocks;
@@ -87,11 +88,11 @@ public class MemoryMarketDataProvider : IMarketDataProvider
         }
     }
 
-    public void UpdateStock(Stock stock)
+    public void UpdateStockPrice(int stockId, double price)
     {
         lock (_stocksLock)
         {
-            _stocks[stock.Id] = new Stock(stock);
+            _stocks[stockId].CurrentPrice = price;
         }
     }
 
@@ -119,32 +120,13 @@ public class MemoryMarketDataProvider : IMarketDataProvider
         }
     }
 
-    public IList<Order> GetMatchingOrders(Order newOrder)
-    {
-        lock (_ordersLock)
-        {
-            var matchingType = newOrder.Type == OrderType.Bid ? OrderType.Ask : OrderType.Bid;
-            var possibleOrders = _activeOrders.Values.Where(order =>
-                order.Type == matchingType
-                && order.StockId == newOrder.StockId
-                && order.TraderId != newOrder.TraderId
-                && order is { Status: OrderStatus.Open, Amount: > 0 }
-                && (newOrder.Type == OrderType.Bid
-                    ? order.Price <= newOrder.Price
-                    : order.Price >= newOrder.Price));
-            var prioritizedOrders = newOrder.Type == OrderType.Bid
-                ? possibleOrders.OrderBy(order => order.Price)
-                : possibleOrders.OrderByDescending(order => order.Price);
-            return prioritizedOrders.ThenBy(order => order.Id).ToList();
-        }
-    }
 
-    public long GetListedStockCount(int traderId, int stockId)
+    public long GetStockCountOfOpenOrdersByTraders(int traderId, int stockId)
     {
         lock (_ordersLock)
         {
             return _activeOrders.Values.Where(order => order.TraderId == traderId
-                && order.StockId == stockId && order.Type == OrderType.Ask && order.Status == OrderStatus.Open)
+                                                       && order.StockId == stockId && order is { Type: OrderType.Ask, Status: OrderStatus.Open })
                 .Sum(order => (long)order.Amount);
         }
     }
@@ -154,7 +136,8 @@ public class MemoryMarketDataProvider : IMarketDataProvider
         lock (_ordersLock)
         {
             return _activeOrders.Values.Where(order => order.TraderId == traderId
-                && order.Type == OrderType.Bid && order.Status == OrderStatus.Open)
+                                                       && order.Type == OrderType.Bid &&
+                                                       order.Status == OrderStatus.Open)
                 .Sum(order => order.Price * order.Amount);
         }
     }
@@ -247,7 +230,8 @@ public class MemoryMarketDataProvider : IMarketDataProvider
             var updatedCount = checked(owned + count);
             if (updatedCount < 0)
             {
-                _logger.LogWarning("Trader {TraderId} stock {StockId} count went below zero ({Count}); removing holding.",
+                _logger.LogWarning(
+                    "Trader {TraderId} stock {StockId} count went below zero ({Count}); removing holding.",
                     traderId, stockId, updatedCount);
                 stocks.Remove(stockId);
             }
