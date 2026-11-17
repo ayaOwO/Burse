@@ -42,7 +42,7 @@ public class MemoryMarketDataProvider : IMarketDataProvider
                 Type = OrderType.Ask,
                 Price = stock.CurrentPrice,
                 Amount = stock.Amount,
-                OwnerId = 0,
+                TraderId = 0,
                 StockId = stock.Id
             };
             _activeOrders.Add(order.Id, order);
@@ -99,7 +99,7 @@ public class MemoryMarketDataProvider : IMarketDataProvider
     {
         lock (_ordersLock)
         {
-            return _activeOrders.Values.Where(order => order.OwnerId == traderId).ToList();
+            return _activeOrders.Values.Where(order => order.TraderId == traderId).ToList();
         }
     }
 
@@ -142,7 +142,7 @@ public class MemoryMarketDataProvider : IMarketDataProvider
         lock (_ordersLock)
         {
             return _trades.Values.Where(trade => trade.OrderIds.Any(orderId =>
-                _activeOrders.TryGetValue(orderId, out var order) && order.OwnerId == traderId)).ToList();
+                _activeOrders.TryGetValue(orderId, out var order) && order.TraderId == traderId)).ToList();
         }
     }
 

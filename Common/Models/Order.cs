@@ -9,7 +9,7 @@ public class Order()
     public double Price { get; init; }
     public int Amount { get; set; }
 
-    [Range(0, int.MaxValue)] public int OwnerId { get; init; }
+    [Range(0, int.MaxValue)] public int TraderId { get; init; }
     [Range(1, int.MaxValue)] public int StockId { get; init; }
     public OrderStatus Status { get; set; }
 }

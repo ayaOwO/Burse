@@ -14,7 +14,7 @@ public sealed class StockService(IMarketDataProvider provider)
     {
         var stock = provider.GetStocks(id);
         var orders = provider.GetOrdersByStockId(id)
-            .Select(order => new StockOrder(order.Id, order.OwnerId, order.Type, order.Price, order.Amount, order.Status))
+            .Select(order => new StockOrder(order.Id, order.TraderId, order.Type, order.Price, order.Amount, order.Status))
             .ToList();
         // shortcut: trade IDs determine recency; use timestamps when matching records execution times.
         var trades = provider.GetTradesByStockId(id).OrderByDescending(trade => trade.Id).Take(10).ToList();

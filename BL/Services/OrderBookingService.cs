@@ -14,6 +14,7 @@ public class OrderBookingService(IMarketDataProvider provider)
         var possibleOrders = orders
             .Where(order =>
                 order.StockId == newOrder.StockId
+                && order.TraderId != newOrder.TraderId
                 && order is { Status: OrderStatus.Open, Amount: > 0 }
                 && (newOrder.Type == OrderType.Bid
                     ? order.Price <= newOrder.Price
