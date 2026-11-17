@@ -22,7 +22,7 @@ public class OrderBookingService(IMarketDataProvider provider) : IOrderBookingSe
         return prioritizedOrders.ThenBy(order => order.Id).ToList();
     }
 
-    private IList<Trade> MatchOrder(Order newOrder)
+    private List<Trade> MatchOrder(Order newOrder)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(newOrder.Amount);
         var trades = new List<Trade>();
