@@ -1,12 +1,12 @@
 using Common.Models;
-using BL.Services;
+using BL.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
 
 [ApiController]
 [Route("stocks")]
-public class StocksController(StockService stocks) : ControllerBase
+public class StocksController(IStockService stocks) : ControllerBase
 {
     [HttpGet]
     public ActionResult<IList<Stock>> GetStocks()

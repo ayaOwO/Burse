@@ -28,10 +28,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<MarketDataProviderOptions>(builder.Configuration);
 builder.Services.AddSingleton<IMarketDataProvider, MemoryMarketDataProvider>();
-builder.Services.AddScoped<StockService>();
-builder.Services.AddScoped<OrderBookingService>();
-builder.Services.AddScoped<TraderService>();
+builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<IOrderBookingService, OrderBookingService>();
+builder.Services.AddScoped<ITraderService, TraderService>();
 
 builder.Services.Configure<RandomStockUpdaterOptions>(builder.Configuration.GetSection(nameof(RandomStockUpdaterOptions)));
 builder.Services.AddSingleton<IStockUpdater, RandomStockUpdater>();

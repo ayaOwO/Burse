@@ -1,12 +1,12 @@
 using Common.Models;
-using BL.Services;
+using BL.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
 
 [ApiController]
 [Route("traders")]
-public class TradersController(TraderService traders) : ControllerBase
+public class TradersController(ITraderService traders) : ControllerBase
 {
     [HttpGet]
     public ActionResult<IList<TraderSummary>> GetTraders()

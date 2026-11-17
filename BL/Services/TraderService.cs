@@ -1,9 +1,10 @@
+using BL.Abstractions;
 using Common.Models;
 using DAL;
 
 namespace BL.Services;
 
-public sealed class TraderService(IMarketDataProvider provider)
+public sealed class TraderService(IMarketDataProvider provider) : ITraderService
 {
     public IList<TraderSummary> GetTraders() => provider.GetAllTraders()
         .Select(trader => new TraderSummary(trader.Id, trader.Name, trader.Money)).ToList();

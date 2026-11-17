@@ -1,9 +1,10 @@
+using BL.Abstractions;
 using Common.Models;
 using DAL;
 
 namespace BL.Services;
 
-public sealed class StockService(IMarketDataProvider provider)
+public sealed class StockService(IMarketDataProvider provider) : IStockService
 {
     public IList<Stock> ListStocks()
     {
