@@ -6,34 +6,32 @@ namespace BL.Services;
 
 public class OrderBookingService(IMarketDataProvider provider)
 {
-    public Order MatchOrder(Guid traderId, Guid stockId, Order newOrder)
+    // shortcut: orders are serialized within one process; use database transactions when running multiple instances.
+    private static readonly SemaphoreSlim OrderSemaphore = new(1, 1);
+
+    public IList<Trade> MatchOrder(Order newOrder)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(newOrder.Amount);
-        var matchingType = newOrder.Type == OrderType.Bid ? OrderType.Ask : OrderType.Bid;
-        var orders = provider.GetOrdersByType(matchingType);
-        var possibleOrders = orders
-            .Where(order =>
-                order.StockId == newOrder.StockId
-                && order.TraderId != newOrder.TraderId
-                && order is { Status: OrderStatus.Open, Amount: > 0 }
-                && (newOrder.Type == OrderType.Bid
-                    ? order.Price <= newOrder.Price
-                    : order.Price >= newOrder.Price));
-        var prioritizedOrders = newOrder.Type == OrderType.Bid
-            ? possibleOrders.OrderBy(order => order.Price)
-            : possibleOrders.OrderByDescending(order => order.Price);
-        var matched = new List<Order>();
-        foreach (var order in prioritizedOrders.ThenBy(order => order.Id))
+        var trades = new List<Trade>();
+        foreach (var order in provider.GetMatchingOrders(newOrder))
         {
             var traded = Math.Min(newOrder.Amount, order.Amount);
             order.Amount -= traded;
             newOrder.Amount -= traded;
+            trades.Add(new Trade
+            {
+                OrderIds = [order.Id, newOrder.Id],
+                StockId = newOrder.StockId,
+                BuyerId = newOrder.Type == OrderType.Bid ? newOrder.TraderId : order.TraderId,
+                SellerId = newOrder.Type == OrderType.Ask ? newOrder.TraderId : order.TraderId,
+                Amount = traded,
+                Price = order.Price
+            });
             if (order.Amount == 0)
             {
                 order.Status = OrderStatus.Filled;
             }
 
-            matched.Add(order);
             if (newOrder.Amount == 0)
             {
                 break;
@@ -42,38 +40,77 @@ public class OrderBookingService(IMarketDataProvider provider)
 
         if (newOrder.Amount == 0)
             newOrder.Status = OrderStatus.Filled;
-        return newOrder;
+        return trades;
     }
 
     public Order CreateOrder(int traderId, OrderType type, int stockId, double price, int amount)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(amount);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(traderId);
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(price);
+        if (!double.IsFinite(price) || price <= 0 || !double.IsFinite(price * amount))
+            throw new ArgumentOutOfRangeException(nameof(price));
+        if (!Enum.IsDefined(type))
+            throw new ArgumentOutOfRangeException(nameof(type));
 
+        OrderSemaphore.Wait();
+        try
+        {
+            var trader = provider.GetTraderById(traderId);
+            var stock = provider.GetStocks(stockId);
+            var openOrders = provider.GetOrdersByTraderId(traderId)
+                .Where(order => order.Status == OrderStatus.Open).ToList();
+            if (openOrders.Any(order => order.StockId == stockId && order.Type != type))
+                throw new InvalidOperationException("Cannot hold buy and sell offers for the same stock.");
+            if (type == OrderType.Ask)
+            {
+                trader.StocksOwned.TryGetValue(stockId, out var owned);
+                var listed = provider.GetListedStockCount(traderId, stockId);
+                if (amount > owned - listed)
+                    throw new InsufficientStocksException();
+            }
+            else
+            {
+                var committed = provider.GetCommittedMoney(traderId);
+                if (price * amount > trader.Money - committed)
+                    throw new InsufficientFundsException();
+            }
 
-        var trader = provider.GetTraderById(traderId);
-        // Check if the stock exists
-        provider.GetStocks(stockId);
-        var order = new Order
-        {
-            Id = Guid.CreateVersion7(), Type = type, Price = price, Amount = amount,
-            OwnerId = traderId, StockId = stockId
-        };
-        switch (type)
-        {
-            case OrderType.Ask when !trader.StocksOwned.TryGetValue(stockId, out var owned) || owned < amount:
-                throw new InsufficientStocksException();
-            case OrderType.Bid when price * amount > trader.Money:
-                throw new InsufficientFundsException();
+            var order = new Order
+            {
+                Id = Guid.CreateVersion7(), Type = type, Price = price, Amount = amount,
+                TraderId = traderId, StockId = stockId
+            };
+            var trades = MatchOrder(order);
+            foreach (var trade in trades)
+            {
+                var cost = trade.Amount * trade.Price;
+                provider.UpdateTraderMoney(trade.BuyerId, -cost);
+                provider.UpdateTraderMoney(trade.SellerId, cost);
+                provider.UpdateTraderStocks(trade.SellerId, trade.StockId, -trade.Amount);
+                provider.UpdateTraderStocks(trade.BuyerId, trade.StockId, trade.Amount);
+                provider.AddTrade(trade);
+                stock.CurrentPrice = trade.Price;
+                provider.UpdateStock(stock);
+            }
+            provider.AddOrder(order);
+            return order;
         }
-
-        provider.AddOrder(order);
-        return order;
+        finally
+        {
+            OrderSemaphore.Release();
+        }
     }
 
     public void CancelOrder(Guid id)
     {
-        provider.CancelOrder(id);
+        OrderSemaphore.Wait();
+        try
+        {
+            provider.CancelOrder(id);
+        }
+        finally
+        {
+            OrderSemaphore.Release();
+        }
     }
 }

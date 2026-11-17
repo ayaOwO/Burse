@@ -18,7 +18,9 @@ public sealed class TraderService(IMarketDataProvider provider)
     public TraderTradesDetails GetTrades(int id)
     {
         var trader = provider.GetTraderById(id);
-        return new TraderTradesDetails(provider.GetTradesByTraderId(id), trader.Money,
-            trader.Money - trader.InitialMoney);
+        var trades = provider.GetTradesByTraderId(id).OrderByDescending(trade => trade.Id).Take(8).ToList();
+        var holdingsValue = provider.GetTraderHoldingsValue(id);
+        return new TraderTradesDetails(trades, trader.Money,
+            trader.Money + holdingsValue - trader.InitialPortfolioValue);
     }
 }

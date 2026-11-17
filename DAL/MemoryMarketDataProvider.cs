@@ -1,5 +1,6 @@
 ﻿using Common.Models;
 using DAL.Options;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace DAL;
@@ -8,13 +9,17 @@ public class MemoryMarketDataProvider : IMarketDataProvider
 {
     private readonly Lock _stocksLock = new();
     private readonly Lock _ordersLock = new();
+    private readonly Lock _tradersLock = new();
+    private readonly ILogger<MemoryMarketDataProvider> _logger;
     private readonly Dictionary<int, StockInfo> _stocks;
     private readonly Dictionary<int, Trader> _traders;
     private readonly Dictionary<Guid, Order> _activeOrders;
     private readonly Dictionary<int, Trade> _trades;
 
-    public MemoryMarketDataProvider(IOptions<MarketDataProviderOptions> options)
+    public MemoryMarketDataProvider(IOptions<MarketDataProviderOptions> options,
+        ILogger<MemoryMarketDataProvider> logger)
     {
+        _logger = logger;
         _traders = new Dictionary<int, Trader>();
         foreach (var trader in options.Value.Traders)
         {
@@ -35,6 +40,7 @@ public class MemoryMarketDataProvider : IMarketDataProvider
         foreach (var stock in options.Value.Stocks)
         {
             _stocks[stock.Id] = new StockInfo(stock);
+            _traders[0].StocksOwned[stock.Id] = stock.Amount;
 
             var order = new Order
             {
@@ -46,6 +52,15 @@ public class MemoryMarketDataProvider : IMarketDataProvider
                 StockId = stock.Id
             };
             _activeOrders.Add(order.Id, order);
+        }
+
+        foreach (var trader in _traders.Values.ToList())
+        {
+            _traders[trader.Id] = trader with
+            {
+                InitialPortfolioValue = trader.Money + _stocks.Values.Sum(stock =>
+                    trader.StocksOwned.TryGetValue(stock.Id, out var count) ? count * stock.CurrentPrice : 0)
+            };
         }
 
         _trades = new Dictionary<int, Trade>();
@@ -63,11 +78,11 @@ public class MemoryMarketDataProvider : IMarketDataProvider
         }
     }
 
-    public StockInfo GetStocks(int id)
+    public StockInfo GetStocks(int stockId)
     {
         lock (_stocksLock)
         {
-            return new StockInfo(_stocks[id]);
+            return new StockInfo(_stocks[stockId]);
         }
     }
 
@@ -103,14 +118,60 @@ public class MemoryMarketDataProvider : IMarketDataProvider
         }
     }
 
+    public IList<Order> GetMatchingOrders(Order newOrder)
+    {
+        lock (_ordersLock)
+        {
+            var matchingType = newOrder.Type == OrderType.Bid ? OrderType.Ask : OrderType.Bid;
+            var possibleOrders = _activeOrders.Values.Where(order =>
+                order.Type == matchingType
+                && order.StockId == newOrder.StockId
+                && order.TraderId != newOrder.TraderId
+                && order is { Status: OrderStatus.Open, Amount: > 0 }
+                && (newOrder.Type == OrderType.Bid
+                    ? order.Price <= newOrder.Price
+                    : order.Price >= newOrder.Price));
+            var prioritizedOrders = newOrder.Type == OrderType.Bid
+                ? possibleOrders.OrderBy(order => order.Price)
+                : possibleOrders.OrderByDescending(order => order.Price);
+            return prioritizedOrders.ThenBy(order => order.Id).ToList();
+        }
+    }
+
+    public long GetListedStockCount(int traderId, int stockId)
+    {
+        lock (_ordersLock)
+        {
+            return _activeOrders.Values.Where(order => order.TraderId == traderId
+                && order.StockId == stockId && order.Type == OrderType.Ask && order.Status == OrderStatus.Open)
+                .Sum(order => (long)order.Amount);
+        }
+    }
+
+    public double GetCommittedMoney(int traderId)
+    {
+        lock (_ordersLock)
+        {
+            return _activeOrders.Values.Where(order => order.TraderId == traderId
+                && order.Type == OrderType.Bid && order.Status == OrderStatus.Open)
+                .Sum(order => order.Price * order.Amount);
+        }
+    }
+
     public void AddOrder(Order order)
     {
         lock (_ordersLock)
         {
-            if (order.Status != OrderStatus.Filled)
-            {
-                _activeOrders.Add(order.Id, order);
-            }
+            _activeOrders.Add(order.Id, order);
+        }
+    }
+
+    public void AddTrade(Trade trade)
+    {
+        lock (_ordersLock)
+        {
+            var id = checked(_trades.Keys.DefaultIfEmpty(0).Max() + 1);
+            _trades.Add(id, trade with { Id = id });
         }
     }
 
@@ -121,7 +182,7 @@ public class MemoryMarketDataProvider : IMarketDataProvider
             var order = _activeOrders[id];
             if (order.Status == OrderStatus.Filled)
             {
-                _activeOrders.Remove(id);
+                throw new InvalidOperationException("Filled orders cannot be cancelled.");
             }
 
             order.Status = OrderStatus.Cancelled;
@@ -137,6 +198,13 @@ public class MemoryMarketDataProvider : IMarketDataProvider
         }
     }
 
+    public IList<Trade> GetRecentTradesByStockId(int stockId, int count)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(count);
+        // GUID v7 is sortable by time
+        return GetTradesByStockId(stockId).OrderByDescending(trade => trade.Id).Take(count).ToList();
+    }
+
     public IList<Trade> GetTradesByTraderId(int traderId)
     {
         lock (_ordersLock)
@@ -148,15 +216,69 @@ public class MemoryMarketDataProvider : IMarketDataProvider
 
     public Trader GetTraderById(int id)
     {
-        var trader = _traders[id];
-        return trader with { StocksOwned = new Dictionary<int, int>(trader.StocksOwned) };
+        lock (_tradersLock)
+        {
+            var trader = _traders[id];
+            return trader with { StocksOwned = new Dictionary<int, int>(trader.StocksOwned) };
+        }
+    }
+
+    public double GetTraderHoldingsValue(int traderId)
+    {
+        lock (_tradersLock)
+        lock (_stocksLock)
+        {
+            return _traders[traderId].StocksOwned.Sum(item =>
+            {
+                var (stockId, count) = item;
+                return _stocks[stockId].CurrentPrice * count;
+            });
+        }
+    }
+
+    public void UpdateTraderStocks(int traderId, int stockId, int count)
+    {
+        lock (_tradersLock)
+        {
+            var trader = _traders[traderId];
+            var stocks = trader.StocksOwned;
+            stocks.TryGetValue(stockId, out var owned);
+            var updatedCount = checked(owned + count);
+            if (updatedCount < 0)
+            {
+                _logger.LogWarning("Trader {TraderId} stock {StockId} count went below zero ({Count}); removing holding.",
+                    traderId, stockId, updatedCount);
+                stocks.Remove(stockId);
+            }
+            else
+            {
+                stocks[stockId] = updatedCount;
+            }
+        }
+    }
+
+    public void UpdateTraderMoney(int traderId, double amount)
+    {
+        if (!double.IsFinite(amount))
+            throw new ArgumentOutOfRangeException(nameof(amount));
+        lock (_tradersLock)
+        {
+            var trader = _traders[traderId];
+            var money = trader.Money + amount;
+            if (!double.IsFinite(money) || money < 0)
+                throw new ArgumentOutOfRangeException(nameof(amount));
+            _traders[traderId] = trader with { Money = money };
+        }
     }
 
     public IList<Trader> GetAllTraders()
     {
-        return _traders.Values.Select(trader => trader with
+        lock (_tradersLock)
         {
-            StocksOwned = new Dictionary<int, int>(trader.StocksOwned)
-        }).ToList();
+            return _traders.Values.Select(trader => trader with
+            {
+                StocksOwned = new Dictionary<int, int>(trader.StocksOwned)
+            }).ToList();
+        }
     }
 }
