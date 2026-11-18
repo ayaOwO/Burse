@@ -159,6 +159,14 @@ public class MemoryMarketDataProvider : IMarketDataProvider
         }
     }
 
+    public Order GetOrderById(Guid id)
+    {
+        lock (_ordersLock)
+        {
+            return _activeOrders[id];
+        }
+    }
+
     public void CancelOrder(Guid id)
     {
         lock (_ordersLock)

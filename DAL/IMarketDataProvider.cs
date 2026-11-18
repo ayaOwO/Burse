@@ -13,6 +13,7 @@ public interface IMarketDataProvider
     public long GetStockCountOfOpenOrdersByTraders(int traderId, int stockId);
     public double GetCommittedMoney(int traderId);
     public void AddOrder(Order order);
+    public Order GetOrderById(Guid id);
     public void AddTrade(Trade trade);
     public void CancelOrder(Guid id);
     public IList<Trade> GetTradesByStockId(int stockId);
