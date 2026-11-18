@@ -1,0 +1,33 @@
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="app-header">
+  <div class="header-inner">
+    <a class="brand" routerLink="/market" aria-label="Burse market"
+      ><svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
+        <rect x="2" y="16" width="6" height="13" rx="1" fill="currentColor" />
+        <rect x="13" y="9" width="6" height="20" rx="1" fill="currentColor" />
+        <rect x="24" y="3" width="6" height="26" rx="1" fill="currentColor" /></svg
+      ><span>burse<span class="brand-dot">.</span></span></a
+    >
+    @if (session.trader(); as trader) {
+      <nav aria-label="Main navigation">
+        <a routerLink="/market" routerLinkActive="active" ariaCurrentWhenActive="page">Market</a
+        ><a routerLink="/portfolio" routerLinkActive="active" ariaCurrentWhenActive="page"
+          >My portfolio</a
+        ><a routerLink="/traders" routerLinkActive="active" ariaCurrentWhenActive="page">Traders</a>
+      </nav>
+      <div class="identity">
+        <span class="avatar" aria-hidden="true">{{ trader.name.slice(0, 1) }}</span>
+        <div>
+          <strong>{{ trader.name }}</strong><span>Trader {{ trader.id }}</span>
+        </div>
+        <button class="text-button signout" (click)="session.signOut()">Sign out</button>
+      </div>
+    } @else {
+      <span class="header-caption">A small exchange. A complete perspective.</span>
+    }
+  </div>
+</header>
+<main id="main" class="app-main" tabindex="-1"><router-outlet /></main>
+<footer class="app-footer">
+  <span>Burse · Simulated stock exchange</span><span>Practice with perspective.</span>
+</footer>

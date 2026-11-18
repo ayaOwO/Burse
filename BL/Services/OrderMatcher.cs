@@ -10,7 +10,7 @@ public class OrderMatcher(IMarketDataProvider provider) : IOrderMatcher
     {
         var matchingType = newOrder.Type == OrderType.Bid ? OrderType.Ask : OrderType.Bid;
         var relevantOrders = provider.GetOpenOrdersByStockId(newOrder.StockId).Where(order =>
-            order.Type == matchingType  &&
+            order.Type == matchingType && order.Amount > 0 &&
             (newOrder.Type == OrderType.Bid ? order.Price <= newOrder.Price : order.Price >= newOrder.Price));
         var prioritizedOrders = newOrder.Type == OrderType.Bid
             ? relevantOrders.OrderBy(order => order.Price)
