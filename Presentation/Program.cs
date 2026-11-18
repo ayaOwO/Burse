@@ -22,6 +22,7 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 builder.Services.AddProblemDetails();
+
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddSwaggerGen();
@@ -29,13 +30,22 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<MarketDataProviderOptions>(builder.Configuration);
 builder.Services.AddSingleton<IMarketDataProvider, MemoryMarketDataProvider>();
 builder.Services.AddScoped<IStockService, StockService>();
+builder.Services.AddSingleton<IDictionary<int, SemaphoreSlim>, Dictionary<int, SemaphoreSlim>>(services =>
+{
+    var provider = services.GetRequiredService<IMarketDataProvider>();
+    var stocks = provider.GetAllStocks();
+    return stocks.ToDictionary(stock => stock.Id, _ => new SemaphoreSlim(1, 1));
+});
+builder.Services.AddScoped<IOrderMatcher, OrderMatcher>();
 builder.Services.AddScoped<IOrderBookingService, OrderBookingService>();
 builder.Services.AddScoped<ITraderService, TraderService>();
 
-builder.Services.Configure<RandomStockUpdaterOptions>(builder.Configuration.GetSection(nameof(RandomStockUpdaterOptions)));
+builder.Services.Configure<RandomStockUpdaterOptions>(
+    builder.Configuration.GetSection(nameof(RandomStockUpdaterOptions)));
 builder.Services.AddSingleton<IStockUpdater, RandomStockUpdater>();
 
-builder.Services.Configure<StockUpdaterServiceOptions>(builder.Configuration.GetSection(nameof(StockUpdaterServiceOptions)));
+builder.Services.Configure<StockUpdaterServiceOptions>(
+    builder.Configuration.GetSection(nameof(StockUpdaterServiceOptions)));
 builder.Services.AddHostedService<StockUpdaterService>();
 var app = builder.Build();
 app.UseExceptionHandler();
