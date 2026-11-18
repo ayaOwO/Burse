@@ -7,7 +7,7 @@ public interface IMarketDataProvider
     public IList<Stock> GetAllStocks();
     public Stock GetStocks(int stockId);
     public void UpdateStockPrice(int stockId, double price);
-    public IList<Order> GetOrdersByStockId(int stockId);
+    public IList<Order> GetOpenOrdersByStockId(int stockId);
     public IList<Order> GetOrdersByType(OrderType type);
     public IList<Order> GetOrdersByTraderId(int traderId);
     public long GetStockCountOfOpenOrdersByTraders(int traderId, int stockId);

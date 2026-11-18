@@ -96,11 +96,11 @@ public class MemoryMarketDataProvider : IMarketDataProvider
         }
     }
 
-    public IList<Order> GetOrdersByStockId(int stockId)
+    public IList<Order> GetOpenOrdersByStockId(int stockId)
     {
         lock (_ordersLock)
         {
-            return _activeOrders.Values.Where(order => order.StockId == stockId).ToList();
+            return _activeOrders.Values.Where(order => order.StockId == stockId && order.Status == OrderStatus.Open).ToList();
         }
     }
 
