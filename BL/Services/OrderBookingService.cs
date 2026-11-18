@@ -52,6 +52,14 @@ public class OrderBookingService(
         provider.UpdateTraderStocks(trade.SellerId, trade.StockId, -1 * trade.Amount);
         provider.UpdateTraderStocks(trade.BuyerId, trade.StockId, trade.Amount);
         var restingOrder = provider.GetOrderById(trade.OrderIds[0]);
+        var initiatingOrder = provider.GetOrderById(trade.OrderIds[1]);
+        initiatingOrder.Amount = trade.Amount;
+        restingOrder.Amount -= trade.Amount;
+        if (initiatingOrder.Amount == 0)
+        {
+            restingOrder.Status = OrderStatus.Filled;
+        }
+
         if (restingOrder.Amount == 0)
         {
             restingOrder.Status = OrderStatus.Filled;
@@ -74,10 +82,15 @@ public class OrderBookingService(
                 .Distinct()
                 .OrderBy(id => id)
                 .ToList();
+            var lastLocked = 0;
             try
             {
                 foreach (var traderId in traderLockOrder)
+                {
                     await traderSemaphores[traderId].WaitAsync();
+                    lastLocked++;
+                }
+
                 ValidateOrder(order);
                 foreach (var trade in trades)
                 {
@@ -95,9 +108,9 @@ public class OrderBookingService(
             }
             finally
             {
-                foreach (var traderId in traderLockOrder)
+                for (var i = lastLocked; i > 0; i--)
                 {
-                    traderSemaphores[traderId].Release();
+                    traderSemaphores[traderLockOrder[i]].Release();
                 }
             }
         }

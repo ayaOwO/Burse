@@ -27,7 +27,7 @@ public class OrderMatcher(IMarketDataProvider provider) : IOrderMatcher
         var orderFilledAmount = 0;
         foreach (var order in prioritizedOrders)
         {
-            var amountTraded = Math.Min(newOrder.Amount, order.Amount);
+            var amountTraded = Math.Min(newOrder.Amount - orderFilledAmount, order.Amount);
             orderFilledAmount += amountTraded;
             trades.Add(new Trade
             {
