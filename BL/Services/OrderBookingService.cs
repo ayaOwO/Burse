@@ -1,12 +1,19 @@
 using BL.Abstractions;
+using Common;
 using Common.Exceptions;
 using Common.Models;
 using DAL;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BL.Services;
 
-public class OrderBookingService(IMarketDataProvider provider, IDictionary<int, SemaphoreSlim> stockSemaphoreSlims,
-    IOrderMatcher orderMatcher)
+public class OrderBookingService(
+    IMarketDataProvider provider,
+    [FromKeyedServices(ServiceKeys.StockSemaphores)]
+    IDictionary<int, SemaphoreSlim> stockSemaphoreSlims,
+    IOrderMatcher orderMatcher,
+    [FromKeyedServices(ServiceKeys.TraderSemaphores)]
+    IDictionary<int, SemaphoreSlim> traderSemaphores)
     : IOrderBookingService
 {
     private void ValidateOrder(Order order)
@@ -36,30 +43,67 @@ public class OrderBookingService(IMarketDataProvider provider, IDictionary<int, 
         }
     }
 
-    public Order CreateOrder(Order order)
+    private void ExecuteTrade(Trade trade)
     {
-        stockSemaphoreSlims[order.StockId].Wait();
+        var cost = trade.Amount * trade.Price;
+        // update stock amount
+        provider.UpdateTraderMoney(trade.BuyerId, -cost);
+        provider.UpdateTraderMoney(trade.SellerId, cost);
+        provider.UpdateTraderStocks(trade.SellerId, trade.StockId, -1 * trade.Amount);
+        provider.UpdateTraderStocks(trade.BuyerId, trade.StockId, trade.Amount);
+        var restingOrder = provider.GetOrderById(trade.OrderIds[0]);
+        if (restingOrder.Amount == 0)
+        {
+            restingOrder.Status = OrderStatus.Filled;
+        }
+
+        provider.AddTrade(trade);
+        provider.UpdateStockPrice(trade.StockId, trade.Price);
+    }
+
+    public async Task CreateOrder(Order order)
+    {
+        var stockSemaphore = stockSemaphoreSlims[order.StockId];
+        await stockSemaphore.WaitAsync();
         try
         {
-            ValidateOrder(order);
             var trades = orderMatcher.MatchOrder(order);
-            foreach (var trade in trades)
+            var traderLockOrder = trades
+                .Select(trade => trade.SellerId == order.TraderId ? trade.BuyerId : trade.SellerId)
+                .Append(order.TraderId)
+                .Distinct()
+                .OrderBy(id => id)
+                .ToList();
+            try
             {
-                var cost = trade.Amount * trade.Price;
-                provider.UpdateTraderMoney(trade.BuyerId, -cost);
-                provider.UpdateTraderMoney(trade.SellerId, cost);
-                provider.UpdateTraderStocks(trade.SellerId, trade.StockId, -1 * trade.Amount);
-                provider.UpdateTraderStocks(trade.BuyerId, trade.StockId, trade.Amount);
-                provider.AddTrade(trade);
-                provider.UpdateStockPrice(trade.StockId, trade.Price);
-            }
+                foreach (var traderId in traderLockOrder)
+                    await traderSemaphores[traderId].WaitAsync();
+                ValidateOrder(order);
+                foreach (var trade in trades)
+                {
+                    ExecuteTrade(trade);
+                }
 
-            provider.AddOrder(order);
-            return order;
+                if (order.Amount == 0)
+                {
+                    order.Status = OrderStatus.Filled;
+                }
+                else
+                {
+                    provider.AddOrder(order);
+                }
+            }
+            finally
+            {
+                foreach (var traderId in traderLockOrder)
+                {
+                    traderSemaphores[traderId].Release();
+                }
+            }
         }
         finally
         {
-            stockSemaphoreSlims[order.StockId].Release();
+            stockSemaphore.Release();
         }
     }
 

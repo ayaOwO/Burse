@@ -4,6 +4,6 @@ namespace BL.Abstractions;
 
 public interface IOrderBookingService
 {
-    public Order CreateOrder(Order order);
+    public Task CreateOrder(Order order);
     public void CancelOrder(Guid id);
 }

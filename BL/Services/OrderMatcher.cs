@@ -24,11 +24,11 @@ public class OrderMatcher(IMarketDataProvider provider) : IOrderMatcher
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(newOrder.Amount);
         var trades = new List<Trade>();
         var prioritizedOrders = GetMatchingOrders(newOrder);
+        var orderFilledAmount = 0;
         foreach (var order in prioritizedOrders)
         {
             var amountTraded = Math.Min(newOrder.Amount, order.Amount);
-            order.Amount -= amountTraded;
-            newOrder.Amount -= amountTraded;
+            orderFilledAmount += amountTraded;
             trades.Add(new Trade
             {
                 OrderIds = [order.Id, newOrder.Id],
@@ -38,14 +38,8 @@ public class OrderMatcher(IMarketDataProvider provider) : IOrderMatcher
                 Amount = amountTraded,
                 Price = order.Price
             });
-            if (order.Amount == 0)
-            {
-                order.Status = OrderStatus.Filled;
-            }
-
             if (newOrder.Amount == 0)
             {
-                newOrder.Status = OrderStatus.Filled;
                 break;
             }
         }

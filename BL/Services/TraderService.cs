@@ -12,7 +12,7 @@ public sealed class TraderService(IMarketDataProvider provider) : ITraderService
     public TraderDetails GetTrader(int id)
     {
         var trader = provider.GetTraderById(id);
-        var orders = provider.GetOrdersByTraderId(id);
+        var orders = provider.GetOrdersByTraderId(id).Where(order => order.Status == OrderStatus.Open).ToList();
         return new TraderDetails(orders, trader.StocksOwned, trader.Money);
     }
 

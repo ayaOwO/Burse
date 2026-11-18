@@ -9,6 +9,8 @@ using Scalar.AspNetCore;
 using Presentation.ExceptionHandlers;
 using Presentation.Services;
 using System.Text.Json.Serialization;
+using Common;
+using Presentation;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("BurseJson.json", optional: false);
@@ -30,12 +32,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<MarketDataProviderOptions>(builder.Configuration);
 builder.Services.AddSingleton<IMarketDataProvider, MemoryMarketDataProvider>();
 builder.Services.AddScoped<IStockService, StockService>();
-builder.Services.AddSingleton<IDictionary<int, SemaphoreSlim>, Dictionary<int, SemaphoreSlim>>(services =>
-{
-    var provider = services.GetRequiredService<IMarketDataProvider>();
-    var stocks = provider.GetAllStocks();
-    return stocks.ToDictionary(stock => stock.Id, _ => new SemaphoreSlim(1, 1));
-});
+builder.Services.AddKeyedSingleton(
+    ServiceKeys.StockSemaphores, Bootstrap.CreateSemaphores);
+builder.Services.AddKeyedSingleton(
+    ServiceKeys.TraderSemaphores, Bootstrap.CreateSemaphores);
 builder.Services.AddScoped<IOrderMatcher, OrderMatcher>();
 builder.Services.AddScoped<IOrderBookingService, OrderBookingService>();
 builder.Services.AddScoped<ITraderService, TraderService>();
