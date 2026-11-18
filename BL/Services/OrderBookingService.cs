@@ -4,6 +4,7 @@ using Common.Exceptions;
 using Common.Models;
 using DAL;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace BL.Services;
 
@@ -13,7 +14,7 @@ public class OrderBookingService(
     IDictionary<int, SemaphoreSlim> stockSemaphoreSlims,
     IOrderMatcher orderMatcher,
     [FromKeyedServices(ServiceKeys.TraderSemaphores)]
-    IDictionary<int, SemaphoreSlim> traderSemaphores)
+    IDictionary<int, SemaphoreSlim> traderSemaphores, ILogger<OrderBookingService> logger)
     : IOrderBookingService
 {
     private void ValidateOrder(Order order)
@@ -41,6 +42,7 @@ public class OrderBookingService(
             if (order.Price * order.Amount > trader.Money - committed)
                 throw new InsufficientFundsException();
         }
+        logger.LogInformation("Successfully validated order {@Order}", order);
     }
 
     private void ExecuteTrade(Trade trade)
@@ -70,6 +72,7 @@ public class OrderBookingService(
 
     public async Task CreateOrder(Order order)
     {
+        logger.LogInformation("Attempting to create an order {@Order}", order);
         var stockSemaphore = stockSemaphoreSlims[order.StockId];
         await stockSemaphore.WaitAsync();
         try
@@ -105,10 +108,16 @@ public class OrderBookingService(
                 }
             }
         }
+        catch (Exception ex) when (ex is InsufficientFundsException or InsufficientStocksException)
+        {
+            logger.LogWarning("Order {@Order} rejected for {Reason}", order, ex.Message);
+            throw;
+        }
         finally
         {
             stockSemaphore.Release();
         }
+        logger.LogInformation("Successfully created an order {@Order}", order);
     }
 
     public void CancelOrder(Guid id)

@@ -291,7 +291,9 @@ public class MatchingTests
         }
 
         traderSemaphores ??= provider.GetAllTraders().ToDictionary(trader => trader.Id, _ => new SemaphoreSlim(1, 1));
-        return new OrderBookingService(provider, semaphores, new OrderMatcher(provider), traderSemaphores);
+        return new OrderBookingService(provider, semaphores,
+            new OrderMatcher(provider, NullLogger<OrderMatcher>.Instance), traderSemaphores,
+            NullLogger<OrderBookingService>.Instance);
     }
 
     private static MemoryMarketDataProvider MatchingProvider(List<Order> orders, int incomingShares = 0)

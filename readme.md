@@ -22,10 +22,9 @@ npm start
 
 * Add a persistent DB `MarketProvider`
 * Improve concurrency when matching orders
-* 
-
 
 AI Usage:
+
 * This project is AI assisted
-* The Angular frontend is AI coded & human tested
+* The Angular frontend and the tests are AI coded & human tested
 

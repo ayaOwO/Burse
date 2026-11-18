@@ -44,7 +44,8 @@ public class OrderStatusTests
         var traderLocks = provider.GetAllTraders().ToDictionary(trader => trader.Id, _ => new SemaphoreSlim(1, 1));
         var incoming = new Order { StockId = 1, TraderId = 1, Price = 10, Amount = requested, Type = type };
         var matcher = new StatusCheckingMatcher(provider);
-        var booking = new OrderBookingService(provider, stockLocks, matcher, traderLocks);
+        var booking = new OrderBookingService(provider, stockLocks, matcher, traderLocks,
+            NullLogger<OrderBookingService>.Instance);
         try
         {
             await booking.CreateOrder(incoming);
@@ -74,7 +75,7 @@ public class OrderStatusTests
 
         public List<Trade> MatchOrder(Order incoming)
         {
-            var trades = new OrderMatcher(provider).MatchOrder(incoming);
+            var trades = new OrderMatcher(provider, NullLogger<OrderMatcher>.Instance).MatchOrder(incoming);
             Assert.That(incoming.Status, Is.EqualTo(OrderStatus.Open));
             Assert.That(trades.Select(trade => provider.GetOrderById(trade.OrderIds[0]).Status),
                 Is.All.EqualTo(OrderStatus.Open));
