@@ -1,0 +1,288 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-16T22:01:06.645708+00:00",
+  "title": "Design System: Burse",
+  "extensions": {
+    "colorMeta": {
+      "ground": {
+        "role": "neutral",
+        "displayName": "Warm Ground",
+        "tonalRamp": [
+          "oklch(15% 0.0019 106.52)",
+          "oklch(27% 0.0042 106.52)",
+          "oklch(39% 0.0064 106.52)",
+          "oklch(51% 0.0066 106.52)",
+          "oklch(63% 0.0066 106.52)",
+          "oklch(75% 0.0066 106.52)",
+          "oklch(87% 0.0034 106.52)",
+          "oklch(95% 0.0013 106.52)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Working White",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(27% 0.0000 89.88)",
+          "oklch(39% 0.0000 89.88)",
+          "oklch(51% 0.0000 89.88)",
+          "oklch(63% 0.0000 89.88)",
+          "oklch(75% 0.0000 89.88)",
+          "oklch(87% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Dark Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0030 176.35)",
+          "oklch(27% 0.0067 176.35)",
+          "oklch(39% 0.0103 176.35)",
+          "oklch(51% 0.0106 176.35)",
+          "oklch(63% 0.0106 176.35)",
+          "oklch(75% 0.0106 176.35)",
+          "oklch(87% 0.0055 176.35)",
+          "oklch(95% 0.0021 176.35)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Quiet Gray",
+        "tonalRamp": [
+          "oklch(15% 0.0036 167.43)",
+          "oklch(27% 0.0079 167.43)",
+          "oklch(39% 0.0123 167.43)",
+          "oklch(51% 0.0126 167.43)",
+          "oklch(63% 0.0126 167.43)",
+          "oklch(75% 0.0126 167.43)",
+          "oklch(87% 0.0066 167.43)",
+          "oklch(95% 0.0025 167.43)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Fine Divider",
+        "tonalRamp": [
+          "oklch(15% 0.0026 134.88)",
+          "oklch(27% 0.0057 134.88)",
+          "oklch(39% 0.0088 134.88)",
+          "oklch(51% 0.0091 134.88)",
+          "oklch(63% 0.0091 134.88)",
+          "oklch(75% 0.0091 134.88)",
+          "oklch(87% 0.0047 134.88)",
+          "oklch(95% 0.0018 134.88)"
+        ]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Exchange Blue",
+        "tonalRamp": [
+          "oklch(15% 0.0497 265.19)",
+          "oklch(27% 0.1092 265.19)",
+          "oklch(39% 0.1688 265.19)",
+          "oklch(51% 0.1738 265.19)",
+          "oklch(63% 0.1738 265.19)",
+          "oklch(75% 0.1738 265.19)",
+          "oklch(87% 0.0904 265.19)",
+          "oklch(95% 0.0348 265.19)"
+        ]
+      },
+      "accent-hover": {
+        "role": "primary",
+        "displayName": "Pressed Blue",
+        "tonalRamp": [
+          "oklch(15% 0.0392 264.91)",
+          "oklch(27% 0.0863 264.91)",
+          "oklch(39% 0.1333 264.91)",
+          "oklch(51% 0.1373 264.91)",
+          "oklch(63% 0.1373 264.91)",
+          "oklch(75% 0.1373 264.91)",
+          "oklch(87% 0.0714 264.91)",
+          "oklch(95% 0.0275 264.91)"
+        ]
+      },
+      "tint": {
+        "role": "primary",
+        "displayName": "Blue Wash",
+        "tonalRamp": [
+          "oklch(15% 0.0040 268.49)",
+          "oklch(27% 0.0088 268.49)",
+          "oklch(39% 0.0137 268.49)",
+          "oklch(51% 0.0141 268.49)",
+          "oklch(63% 0.0141 268.49)",
+          "oklch(75% 0.0141 268.49)",
+          "oklch(87% 0.0073 268.49)",
+          "oklch(95% 0.0028 268.49)"
+        ]
+      },
+      "positive": {
+        "role": "secondary",
+        "displayName": "Gain Green",
+        "tonalRamp": [
+          "oklch(15% 0.0234 160.97)",
+          "oklch(27% 0.0515 160.97)",
+          "oklch(39% 0.0795 160.97)",
+          "oklch(51% 0.0819 160.97)",
+          "oklch(63% 0.0819 160.97)",
+          "oklch(75% 0.0819 160.97)",
+          "oklch(87% 0.0426 160.97)",
+          "oklch(95% 0.0164 160.97)"
+        ]
+      },
+      "negative": {
+        "role": "secondary",
+        "displayName": "Loss Red",
+        "tonalRamp": [
+          "oklch(15% 0.0398 27.24)",
+          "oklch(27% 0.0876 27.24)",
+          "oklch(39% 0.1354 27.24)",
+          "oklch(51% 0.1394 27.24)",
+          "oklch(63% 0.1394 27.24)",
+          "oklch(75% 0.1394 27.24)",
+          "oklch(87% 0.0725 27.24)",
+          "oklch(95% 0.0279 27.24)"
+        ]
+      }
+    },
+    "shadows": [
+      {
+        "name": "selected-segment",
+        "value": "0 2px 5px #14261914",
+        "purpose": "Selected buy/sell segment only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "button-state",
+        "value": "background-color 160ms ease-out, color 160ms ease-out",
+        "purpose": "Button state changes; disabled under prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide",
+        "value": "1500px"
+      },
+      {
+        "name": "compact-desktop",
+        "value": "1100px"
+      },
+      {
+        "name": "stacked",
+        "value": "850px"
+      },
+      {
+        "name": "mobile",
+        "value": "600px"
+      },
+      {
+        "name": "narrow-heading",
+        "value": "380px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Explicit action in the exchange workspace.",
+      "html": "<button class=\"ds-primary\">Place buy order</button>",
+      "css": ".ds-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;border-radius:6px;min-height:44px;padding:10px 18px;line-height:1.3;font-weight:550;text-decoration:none;text-align:center;cursor:pointer;transition:background-color 160ms ease-out,color 160ms ease-out;font-family:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;font-size:13.02px;background:var(--accent,#2449b3);color:#fff;}.ds-primary:hover:not(:disabled){background:var(--accent-hover,#193685);color:#fff;}.ds-primary:focus-visible{outline:3px solid var(--accent,#2449b3);outline-offset:4px}.ds-primary:disabled{opacity:.55;cursor:not-allowed}"
+    },
+    {
+      "name": "Secondary button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Explicit action in the exchange workspace.",
+      "html": "<button class=\"ds-secondary\">Refresh</button>",
+      "css": ".ds-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;border-radius:6px;min-height:44px;padding:10px 18px;line-height:1.3;font-weight:550;text-decoration:none;text-align:center;cursor:pointer;transition:background-color 160ms ease-out,color 160ms ease-out;font-family:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;font-size:13.02px;background:var(--surface,#fff);color:var(--ink,#202725);border-color:#cbd2ca;}.ds-secondary:hover:not(:disabled){background:#edf0e9;color:var(--ink,#202725);}.ds-secondary:focus-visible{outline:3px solid var(--accent,#2449b3);outline-offset:4px}.ds-secondary:disabled{opacity:.55;cursor:not-allowed}"
+    },
+    {
+      "name": "Cancellation button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Explicit action in the exchange workspace.",
+      "html": "<button class=\"ds-danger\">Confirm cancellation</button>",
+      "css": ".ds-danger{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;border-radius:6px;min-height:44px;padding:10px 18px;line-height:1.3;font-weight:550;text-decoration:none;text-align:center;cursor:pointer;transition:background-color 160ms ease-out,color 160ms ease-out;font-family:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;font-size:13.02px;background:var(--negative,#a13932);color:#fff;min-height:36px;padding:7px 12px;font-size:11.9px;}.ds-danger:focus-visible{outline:3px solid var(--accent,#2449b3);outline-offset:4px}.ds-danger:disabled{opacity:.55;cursor:not-allowed}"
+    },
+    {
+      "name": "Text action",
+      "kind": "button",
+      "refersTo": "button-text",
+      "description": "Low-emphasis action with an explicit label.",
+      "html": "<button class=\"ds-text\">Cancel order</button>",
+      "css": ".ds-text{font-family:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;font-size:13.02px;border:0;background:transparent;color:var(--accent,#2449b3);padding:8px 4px;min-height:36px;text-decoration:underline;text-underline-offset:4px;font-size:11.9px;cursor:pointer;transition:background-color 160ms ease-out,color 160ms ease-out}.ds-text:hover:not(:disabled){color:var(--accent-hover,#193685);background:var(--tint,#eef2fc)}.ds-text:focus-visible{outline:3px solid var(--accent,#2449b3);outline-offset:4px}.ds-text:disabled{opacity:.55;cursor:not-allowed}"
+    },
+    {
+      "name": "Labelled input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Persistent label and visible focus for exact entry.",
+      "html": "<label class=\"ds-label\" for=\"ds-quantity\">Quantity</label><input class=\"ds-input\" id=\"ds-quantity\" type=\"number\" min=\"1\" step=\"1\" value=\"1\">",
+      "css": ".ds-label{display:block;font-family:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;font-size:14px;font-size:12.6px;font-weight:600;margin:20px 0 8px;color:var(--ink,#202725)}.ds-input{font-family:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;font-size:14px;width:100%;border:1px solid #b8c1b8;background:var(--surface,#fff);color:var(--ink,#202725);border-radius:6px;padding:11px 12px;min-height:44px;line-height:1.4;caret-color:var(--accent,#2449b3)}.ds-input:hover{border-color:#7d8c7f}.ds-input[readonly]{background:#f3f4f1}.ds-input:focus-visible{outline:3px solid var(--accent,#2449b3);outline-offset:4px}"
+    },
+    {
+      "name": "Main navigation",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "Active route combines color, underline, and aria-current.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Main navigation\"><a href=\"#market\" aria-current=\"page\">Market</a><a href=\"#portfolio\">My portfolio</a><a href=\"#traders\">Traders</a></nav>",
+      "css": ".ds-nav{display:flex;gap:32px;min-height:56px;font-family:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;font-size:14px;}.ds-nav a{position:relative;display:flex;align-items:center;text-decoration:none;color:var(--muted,#626b67);font-weight:550;white-space:nowrap}.ds-nav a:hover{color:var(--ink,#202725)}.ds-nav a[aria-current]{color:var(--accent,#2449b3)}.ds-nav a[aria-current]:after{content:\"\";position:absolute;bottom:0;height:3px;border-radius:3px 3px 0 0;left:0;right:0;background:var(--accent,#2449b3)}.ds-nav a:focus-visible{outline:3px solid var(--accent,#2449b3);outline-offset:4px}"
+    },
+    {
+      "name": "Active trader badge",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "Informational identity marker, without interaction.",
+      "html": "<span class=\"ds-badge\">You</span>",
+      "css": ".ds-badge{display:inline-block;font-family:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;font-size:13.02px;background:var(--tint,#eef2fc);color:var(--accent,#2449b3);padding:3px 10px;border-radius:4px;font-size:11.2px}"
+    },
+    {
+      "name": "Working surface",
+      "kind": "card",
+      "refersTo": "surface",
+      "description": "Flat shared table or task container.",
+      "html": "<section class=\"ds-surface\"><div class=\"ds-toolbar\"><h2>All stocks</h2></div><p class=\"ds-empty\">No stocks listed. Try refreshing.</p></section>",
+      "css": ".ds-surface{font-family:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;font-size:14px;background:var(--surface,#fff);color:var(--ink,#202725);border:1px solid var(--line,#e1e5df);border-radius:var(--radius,12px);min-width:0}.ds-toolbar{padding:22px 26px;border-bottom:1px solid var(--line,#e1e5df)}.ds-toolbar h2{margin:0;font-size:16.1px;font-weight:650;line-height:1.5;letter-spacing:-.015em}.ds-empty{padding:22px 26px;margin:0;color:var(--muted,#626b67)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Exchange Workspace",
+    "overview": "A restrained exchange workspace puts changing prices, account constraints, and deliberate actions in clear view. Warm off-white ground supports white working surfaces, dark ink, and a deep blue action accent. This descriptive north-star name is a provisional label for the approved direction, not a separately approved identity.\n\nDensity comes from aligned tables and compact controls, with space between task groups. A single sans-serif stack, quiet dividers, and ordinary navigation support precise scanning. Numerical hierarchy carries the work; decoration stays subordinate.",
+    "keyCharacteristics": [
+      "Warm ground with white working surfaces.",
+      "Blue actions and active states; explicit buy/sell language.",
+      "Tabular, right-aligned numerical data.",
+      "Inline trading controls and local table scrolling."
+    ],
+    "rules": [
+      {
+        "name": "The Action Accent Rule",
+        "body": "Use deep blue for actions, active navigation, and selection; keep buy/sell labels explicit.",
+        "section": "colors"
+      },
+      {
+        "name": "The Numerical Alignment Rule",
+        "body": "Right-align prices and quantities with tabular numerals; retain readable labels beside account values.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Surface Rule",
+        "body": "Separate working regions with tone, spacing, and fine borders. Reserve the existing small shadow for the selected order-side control.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep persistent field labels, visible focus, and text explanations for errors.",
+      "Do stack trading sections and contain wide tables in labelled scroll regions on narrow screens.",
+      "Do keep account constraints adjacent to the order form."
+    ],
+    "donts": [
+      "Don't replace useful trading data with decorative charts, gradients, or ornamental motion.",
+      "Don't rely on semantic color alone to communicate buy/sell or profit/loss.",
+      "Don't add separate panels around every individual value."
+    ]
+  }
+}
