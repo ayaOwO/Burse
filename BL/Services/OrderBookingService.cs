@@ -45,19 +45,18 @@ public class OrderBookingService(
 
     private void ExecuteTrade(Trade trade)
     {
+        var restingOrder = provider.GetOrderById(trade.OrderIds[0]);
+        var initiatingOrder = provider.GetOrderById(trade.OrderIds[1]);
         var cost = trade.Amount * trade.Price;
-        // update stock amount
-        provider.UpdateTraderMoney(trade.BuyerId, -cost);
+        provider.UpdateTraderMoney(trade.BuyerId, -1 * cost);
         provider.UpdateTraderMoney(trade.SellerId, cost);
         provider.UpdateTraderStocks(trade.SellerId, trade.StockId, -1 * trade.Amount);
         provider.UpdateTraderStocks(trade.BuyerId, trade.StockId, trade.Amount);
-        var restingOrder = provider.GetOrderById(trade.OrderIds[0]);
-        var initiatingOrder = provider.GetOrderById(trade.OrderIds[1]);
-        initiatingOrder.Amount = trade.Amount;
+        initiatingOrder.Amount -= trade.Amount;
         restingOrder.Amount -= trade.Amount;
         if (initiatingOrder.Amount == 0)
         {
-            restingOrder.Status = OrderStatus.Filled;
+            initiatingOrder.Status = OrderStatus.Filled;
         }
 
         if (restingOrder.Amount == 0)
@@ -92,23 +91,15 @@ public class OrderBookingService(
                 }
 
                 ValidateOrder(order);
+                provider.AddOrder(order);
                 foreach (var trade in trades)
                 {
                     ExecuteTrade(trade);
                 }
-
-                if (order.Amount == 0)
-                {
-                    order.Status = OrderStatus.Filled;
-                }
-                else
-                {
-                    provider.AddOrder(order);
-                }
             }
             finally
             {
-                for (var i = lastLocked; i > 0; i--)
+                for (var i = lastLocked - 1; i >= 0; i--)
                 {
                     traderSemaphores[traderLockOrder[i]].Release();
                 }

@@ -38,7 +38,7 @@ public class OrderMatcher(IMarketDataProvider provider) : IOrderMatcher
                 Amount = amountTraded,
                 Price = order.Price
             });
-            if (newOrder.Amount == 0)
+            if (orderFilledAmount == newOrder.Amount)
             {
                 break;
             }
