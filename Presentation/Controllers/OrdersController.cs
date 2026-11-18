@@ -10,13 +10,14 @@ namespace Presentation.Controllers;
 public class OrdersController(IOrderBookingService ordersBooking) : ControllerBase
 {
     [HttpPost]
-    public IActionResult CreateOrder(CreateOrderRequest request)
+    public async Task<IActionResult> CreateOrder(CreateOrderRequest request)
     {
-        var order = ordersBooking.CreateOrder(new Order
+        var order = new Order
         {
             TraderId = request.TraderId, Type = request.Type, StockId = request.StockId,
             Price = request.Price, Amount = request.Amount
-        });
+        };
+        await ordersBooking.CreateOrder(order);
         return Ok(new { order.Id });
     }
 
