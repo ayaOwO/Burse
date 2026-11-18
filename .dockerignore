@@ -1,0 +1,13 @@
+**
+!Common/
+!Common/**
+!DAL/
+!DAL/**
+!BL/
+!BL/**
+!Presentation/
+!Presentation/**
+**/bin
+**/obj
+**/logs
+**/.env*

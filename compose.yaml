@@ -1,0 +1,11 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Presentation/Dockerfile
+  frontend:
+    build: ./Frontend
+    depends_on:
+      - api
+    ports:
+      - "127.0.0.1:8080:80"
