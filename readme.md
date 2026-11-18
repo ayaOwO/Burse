@@ -20,8 +20,9 @@ npm start
 
 ## Next todos:
 
-* Add a persistent DB `MarketProvider`
+* Add a persistent DB `MarketProvider` with atomic orders and trades
 * Improve concurrency when matching orders
+* Authentication
 
 AI Usage:
 

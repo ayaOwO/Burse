@@ -42,11 +42,13 @@ public class OrderBookingService(
             if (order.Price * order.Amount > trader.Money - committed)
                 throw new InsufficientFundsException();
         }
+
         logger.LogInformation("Successfully validated order {@Order}", order);
     }
 
     private void ExecuteTrade(Trade trade)
     {
+        logger.LogDebug("Executing trade {@Trade}", trade);
         var restingOrder = provider.GetOrderById(trade.OrderIds[0]);
         var initiatingOrder = provider.GetOrderById(trade.OrderIds[1]);
         var cost = trade.Amount * trade.Price;
@@ -68,6 +70,7 @@ public class OrderBookingService(
 
         provider.AddTrade(trade);
         provider.UpdateStockPrice(trade.StockId, trade.Price);
+        logger.LogInformation("Successfully executed trade {@Trade}", trade);
     }
 
     public async Task CreateOrder(Order order)
@@ -117,6 +120,7 @@ public class OrderBookingService(
         {
             stockSemaphore.Release();
         }
+
         logger.LogInformation("Successfully created an order {@Order}", order);
     }
 
@@ -127,6 +131,7 @@ public class OrderBookingService(
         try
         {
             provider.CancelOrder(id);
+            logger.LogInformation("Successfully cancelled an order {OrderId}", id);
         }
         finally
         {
