@@ -3,4 +3,5 @@
   <Project Path="Common/Common.csproj" />
   <Project Path="DAL/DAL.csproj" />
   <Project Path="Presentation/Presentation.csproj" />
+  <Project Path="Tests/Tests.csproj" />
 </Solution>

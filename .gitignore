@@ -54,3 +54,11 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 logs/
+
+# Angular and browser verification
+Frontend/node_modules/
+Frontend/.angular/
+Frontend/dist/
+Frontend/test-results/
+Frontend/playwright-report/
+.impeccable/review/
